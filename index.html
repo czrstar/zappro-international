@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ZapPro — WhatsApp AI Agent for n8n</title>
+  <meta name="description" content="Production-ready n8n workflow that turns WhatsApp into an AI-powered assistant. One-time purchase. No subscription." />
+  <meta property="og:title" content="ZapPro — WhatsApp AI Agent for n8n" />
+  <meta property="og:description" content="Production-ready n8n workflow. AI replies, lead qualification, appointment booking, and team handoff — all in WhatsApp." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://zapproai.com" />
+  <link rel="canonical" href="https://zapproai.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:        #22C55E;
+      --green-dark:   #16A34A;
+      --blue-primary: #0369A1;
+      --blue-hover:   #0284C7;
+      --blue-deep:    #0C4A6E;
+      --blue-pale:    #E0F2FE;
+      --blue-light:   #BAE6FD;
+      --dark:         #0F172A;
+      --dark2:        #1E293B;
+      --white:        #FFFFFF;
+      --grey-500:     #475569;
+      --grey-300:     #CBD5E1;
+      --grey-100:     #F1F5F9;
+      --border:       #E2E8F0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--dark);
+      background: var(--white);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 1.5rem;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 22px; letter-spacing: -1.5px; color: var(--dark);
+    }
+    .nav-logo svg { width: 32px; height: 32px; }
+    .nav-cta {
+      background: var(--blue-primary); color: var(--white);
+      padding: .5rem 1.2rem; border-radius: 8px;
+      font-size: .85rem; font-weight: 600;
+      transition: background .2s;
+    }
+    .nav-cta:hover { background: var(--blue-hover); }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, var(--dark) 0%, #0d1829 60%, var(--dark2) 100%);
+      padding: 5rem 1.5rem 4rem;
+      text-align: center;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(34,197,94,.12);
+      color: var(--green);
+      border: 1px solid rgba(34,197,94,.3);
+      border-radius: 20px;
+      padding: .3rem .9rem;
+      font-size: .78rem; font-weight: 600;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 1.4rem;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      color: var(--white);
+      max-width: 760px;
+      margin: 0 auto 1.2rem;
+    }
+    .hero h1 span {
+      background: linear-gradient(90deg, var(--green), var(--blue-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: #94A3B8;
+      max-width: 580px;
+      margin: 0 auto 2.2rem;
+    }
+    .hero-actions {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: .8rem;
+      margin-bottom: 2.5rem;
+    }
+    .btn-primary {
+      background: var(--green); color: var(--white);
+      padding: .85rem 2rem; border-radius: 10px;
+      font-weight: 700; font-size: 1rem;
+      transition: background .2s, transform .15s;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); }
+    .btn-secondary {
+      background: rgba(255,255,255,.08); color: var(--white);
+      border: 1px solid rgba(255,255,255,.2);
+      padding: .85rem 2rem; border-radius: 10px;
+      font-weight: 600; font-size: 1rem;
+      transition: background .2s;
+      display: inline-block;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,.14); }
+    .hero-proof {
+      display: flex; flex-wrap: wrap; justify-content: center; gap: 1.8rem;
+      color: #64748B; font-size: .85rem;
+    }
+    .hero-proof span { display: flex; align-items: center; gap: .4rem; }
+    .hero-proof .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+    /* ── SECTION SHELL ── */
+    section { padding: 5rem 1.5rem; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: .78rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--blue-primary);
+      margin-bottom: .6rem;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; letter-spacing: -1px;
+      line-height: 1.2; margin-bottom: 1rem;
+    }
+    .section-sub {
+      font-size: 1rem; color: var(--grey-500);
+      max-width: 580px; margin-bottom: 3rem;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how { background: var(--grey-100); }
+    .steps { display: grid; gap: 1.5rem; }
+    @media (min-width: 700px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+    .step-card {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 14px; padding: 1.8rem 1.4rem;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--blue-primary); color: var(--white);
+      font-weight: 800; font-size: .95rem;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .step-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+    .step-card p { font-size: .9rem; color: var(--grey-500); line-height: 1.6; }
+
+    /* ── WHAT'S INCLUDED ── */
+    .included-grid {
+      display: grid; gap: 1.2rem;
+    }
+    @media (min-width: 700px) { .included-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (min-width: 1000px) { .included-grid { grid-template-columns: repeat(3, 1fr); } }
+    .inc-card {
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem; transition: border-color .2s, transform .15s;
+    }
+    .inc-card:hover { border-color: var(--blue-primary); transform: translateY(-3px); }
+    .inc-icon { font-size: 1.5rem; margin-bottom: .7rem; }
+    .inc-card h4 { font-size: .95rem; font-weight: 700; margin-bottom: .35rem; }
+    .inc-card p { font-size: .85rem; color: var(--grey-500); line-height: 1.55; }
+
+    /* ── PRICING ── */
+    .pricing-section { background: var(--dark); }
+    .pricing-section .section-title { color: var(--white); }
+    .pricing-section .section-sub { color: #64748B; }
+    .pricing-grid {
+      display: grid; gap: 1.5rem;
+    }
+    @media (min-width: 700px) { .pricing-grid { grid-template-columns: repeat(2, 1fr); } }
+    .plan-card {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 16px; padding: 2rem;
+      background: rgba(255,255,255,.04);
+      transition: transform .15s, border-color .2s;
+    }
+    .plan-card:hover { transform: translateY(-4px); border-color: rgba(255,255,255,.25); }
+    .plan-card.featured {
+      border-color: var(--green);
+      background: rgba(34,197,94,.06);
+    }
+    .plan-badge {
+      display: inline-block;
+      background: var(--green); color: var(--white);
+      font-size: .72rem; font-weight: 700;
+      padding: .2rem .7rem; border-radius: 20px;
+      margin-bottom: .8rem; letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .plan-name { font-size: 1.3rem; font-weight: 800; color: var(--white); margin-bottom: .3rem; }
+    .plan-price {
+      font-size: 2.8rem; font-weight: 800; color: var(--white);
+      letter-spacing: -2px; line-height: 1; margin-bottom: .3rem;
+    }
+    .plan-price sup { font-size: 1.4rem; vertical-align: super; letter-spacing: 0; }
+    .plan-once { font-size: .82rem; color: #64748B; margin-bottom: 1.2rem; }
+    .plan-features { list-style: none; margin-bottom: 1.8rem; }
+    .plan-features li {
+      font-size: .9rem; color: #CBD5E1;
+      padding: .4rem 0; border-bottom: 1px solid rgba(255,255,255,.06);
+      display: flex; align-items: flex-start; gap: .6rem;
+    }
+    .plan-features li .ck { color: var(--green); font-weight: 700; flex-shrink: 0; }
+    .plan-btn {
+      display: block; text-align: center;
+      padding: .85rem; border-radius: 10px;
+      font-weight: 700; font-size: .95rem;
+      transition: background .2s, transform .15s;
+    }
+    .plan-btn.green { background: var(--green); color: var(--white); }
+    .plan-btn.green:hover { background: var(--green-dark); transform: translateY(-2px); }
+    .plan-btn.outline {
+      border: 1px solid rgba(255,255,255,.2); color: var(--white);
+      background: transparent;
+    }
+    .plan-btn.outline:hover { background: rgba(255,255,255,.08); }
+    .pricing-note {
+      text-align: center; margin-top: 1.5rem;
+      font-size: .85rem; color: #475569;
+    }
+
+    /* ── TECH STACK ── */
+    .tech { background: var(--grey-100); }
+    .tech-chips {
+      display: flex; flex-wrap: wrap; gap: .8rem;
+    }
+    .chip {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: 8px; padding: .5rem 1rem;
+      font-size: .88rem; font-weight: 600;
+      display: flex; align-items: center; gap: .5rem;
+    }
+
+    /* ── WHO IT'S FOR ── */
+    .for-grid {
+      display: grid; gap: 1.2rem;
+    }
+    @media (min-width: 700px) { .for-grid { grid-template-columns: repeat(2, 1fr); } }
+    .for-card {
+      border-left: 3px solid var(--green);
+      padding: 1rem 1.2rem;
+      background: var(--grey-100);
+      border-radius: 0 10px 10px 0;
+    }
+    .for-card h4 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+    .for-card p { font-size: .85rem; color: var(--grey-500); line-height: 1.55; }
+
+    /* ── FAQ ── */
+    .faq-list { max-width: 780px; }
+    details {
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 0;
+    }
+    summary {
+      font-weight: 600; font-size: .95rem;
+      cursor: pointer; list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    summary::after { content: "+"; font-size: 1.2rem; color: var(--blue-primary); }
+    details[open] summary::after { content: "−"; }
+    details p {
+      margin-top: .7rem; font-size: .9rem;
+      color: var(--grey-500); line-height: 1.65;
+    }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      background: linear-gradient(135deg, #064E3B 0%, #065F46 40%, var(--blue-deep) 100%);
+      text-align: center;
+      padding: 5rem 1.5rem;
+    }
+    .final-cta h2 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800; letter-spacing: -1.5px;
+      color: var(--white); margin-bottom: 1rem;
+    }
+    .final-cta p { color: #94A3B8; font-size: 1rem; margin-bottom: 2rem; }
+    .final-actions {
+      display: flex; flex-wrap: wrap;
+      justify-content: center; gap: .8rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); color: #475569;
+      padding: 2.5rem 1.5rem;
+      font-size: .82rem;
+    }
+    .footer-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; flex-wrap: wrap;
+      justify-content: space-between; align-items: center; gap: 1rem;
+    }
+    .footer-logo {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 800; font-size: 18px; letter-spacing: -1px; color: var(--white);
+    }
+    .footer-logo svg { width: 28px; height: 28px; }
+
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .plan-price { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">
+      <!-- ZapPro logo -->
+      <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="zapgrad-nav" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22C55E"/>
+            <stop offset="1" stop-color="#38BDF8"/>
+          </linearGradient>
+        </defs>
+        <rect x="36" y="36" rx="120" ry="120" width="440" height="440" fill="#0B0F14"/>
+        <path d="M86 104 C160 54 270 48 426 104" stroke="#111827" stroke-width="44" opacity="0.55" stroke-linecap="round"/>
+        <path d="M164 184 H352 L164 304 H352" stroke="url(#zapgrad-nav)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M132 230 C112 256 112 252 132 278" stroke="url(#zapgrad-nav)" stroke-width="26" stroke-linecap="round" opacity="0.65"/>
+      </svg>
+      ZapPro
+    </a>
+    <a href="#pricing" class="nav-cta">Get the template →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-badge">n8n workflow template</div>
+    <h1>Your WhatsApp number,<br><span>AI-powered in 2 hours</span></h1>
+    <p class="hero-sub">
+      Production-ready n8n workflow: AI replies, lead qualification, appointment booking,
+      and human handoff — all inside WhatsApp. One-time purchase, no subscription.
+    </p>
+    <div class="hero-actions">
+      <a href="#gumroad-pro" class="btn-primary">Get Pro — $497</a>
+      <a href="#gumroad-core" class="btn-secondary">Core — $297</a>
+    </div>
+    <div class="hero-proof">
+      <span><span class="dot"></span> One-time payment</span>
+      <span><span class="dot"></span> Works with any WhatsApp Business number</span>
+      <span><span class="dot"></span> Self-hosted, you own the data</span>
+      <span><span class="dot"></span> No monthly fees</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="container">
+    <p class="section-label">How it works</p>
+    <h2 class="section-title">Three steps to a live AI agent</h2>
+    <p class="section-sub">Import once. Customize your prompt. Go live. The workflow handles the rest.</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Import the workflow</h3>
+        <p>Upload the JSON file into your n8n instance. All 65 nodes are pre-wired and ready. No coding required.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Add your credentials</h3>
+        <p>Connect your OpenRouter key, Evolution API instance, and PostgreSQL database. The setup guide walks you through each one.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Write your system prompt</h3>
+        <p>Tell the AI who it is, what it can help with, and when to escalate. A starter template is included. Then hit Publish.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section>
+  <div class="container">
+    <p class="section-label">What's included</p>
+    <h2 class="section-title">Everything you need out of the box</h2>
+    <p class="section-sub">Built from a real client deployment — not a toy demo. Every edge case is handled.</p>
+    <div class="included-grid">
+      <div class="inc-card">
+        <div class="inc-icon">🤖</div>
+        <h4>AI Agent (OpenRouter)</h4>
+        <p>Works with any model on OpenRouter — Claude, GPT-4o, Gemini, Llama. Switch models by changing one line.</p>
+      </div>
+      <div class="inc-card">
+        <div class="inc-icon">🔁</div>
+        <h4>Automatic fallback</h4>
+        <p>If OpenRouter errors, the workflow automatically switches to Anthropic direct API. Zero downtime for your users.</p>
+      </div>
+      <div class="inc-card">
+        <div class="inc-icon">⏱️</div>
+        <h4>Message buffering</h4>
+        <p>Rapid follow-up messages are batched together before the AI responds — just like a real conversation.</p>
+      </div>
+      <div class="inc-card">
+        <div class="inc-icon">🙋</div>
+        <h4>Human-mode toggle</h4>
+        <p>Your team can pause the bot for any chat with a single message. The bot resumes automatically when they're done.</p>
+      </div>
+      <div class="inc-card">
+        <div class="inc-icon">🚨</div>
+        <h4>Urgent escalation</h4>
+        <p>The AI detects urgency from keywords and tags, and notifies your team instantly with the full conversation context.</p>
+      </div>
+      <div class="inc-card">
+        <div class="inc-icon">🔒</div>
+        <h4>Duplicate prevention</h4>
+        <p>PostgreSQL-level deduplication with SKIP LOCKED ensures each message is processed exactly once, even under load.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="container">
+    <p class="section-label" style="color: var(--green);">Pricing</p>
+    <h2 class="section-title">One-time purchase. Yours forever.</h2>
+    <p class="section-sub">No subscription. No per-message fees. Deploy to as many clients as you want.</p>
+    <div class="pricing-grid">
+      <!-- CORE -->
+      <div class="plan-card">
+        <div class="plan-name">Core</div>
+        <div class="plan-price"><sup>$</sup>297</div>
+        <div class="plan-once">one-time · instant download</div>
+        <ul class="plan-features">
+          <li><span class="ck">✓</span> 65-node n8n workflow (JSON)</li>
+          <li><span class="ck">✓</span> AI agent with OpenRouter</li>
+          <li><span class="ck">✓</span> Message buffering</li>
+          <li><span class="ck">✓</span> Human-mode toggle</li>
+          <li><span class="ck">✓</span> Automatic AI fallback</li>
+          <li><span class="ck">✓</span> Urgency detection &amp; team alerts</li>
+          <li><span class="ck">✓</span> 7-page setup guide (PDF)</li>
+          <li><span class="ck">✓</span> System prompt starter template</li>
+        </ul>
+        <a href="#gumroad-core" class="plan-btn outline">Buy Core →</a>
+      </div>
+      <!-- PRO -->
+      <div class="plan-card featured">
+        <div class="plan-badge">Most popular</div>
+        <div class="plan-name">Pro</div>
+        <div class="plan-price"><sup>$</sup>497</div>
+        <div class="plan-once">one-time · instant download</div>
+        <ul class="plan-features">
+          <li><span class="ck">✓</span> Everything in Core</li>
+          <li><span class="ck">✓</span> Google Calendar scheduling workflow</li>
+          <li><span class="ck">✓</span> D+1 / D+3 follow-up sequences</li>
+          <li><span class="ck">✓</span> Central error monitor workflow</li>
+          <li><span class="ck">✓</span> Appointment reminder (day-before)</li>
+          <li><span class="ck">✓</span> Multi-client architecture guide</li>
+          <li><span class="ck">✓</span> Ready for agency reselling</li>
+        </ul>
+        <a href="#gumroad-pro" class="plan-btn green">Buy Pro →</a>
+      </div>
+    </div>
+    <p class="pricing-note">Both tiers include lifetime access and all future updates to that tier.</p>
+  </div>
+</section>
+
+<!-- TECH STACK -->
+<section class="tech">
+  <div class="container">
+    <p class="section-label">Tech stack</p>
+    <h2 class="section-title">Built on tools you already know</h2>
+    <p class="section-sub">ZapPro uses only open-source or well-supported services — no lock-in, no black boxes.</p>
+    <div class="tech-chips">
+      <div class="chip">⚡ n8n</div>
+      <div class="chip">💬 WhatsApp Business API</div>
+      <div class="chip">🔌 Evolution API</div>
+      <div class="chip">🧠 OpenRouter (any LLM)</div>
+      <div class="chip">🗄️ PostgreSQL</div>
+      <div class="chip">📅 Google Calendar</div>
+      <div class="chip">🤖 Claude / GPT-4o / Gemini</div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IT'S FOR -->
+<section>
+  <div class="container">
+    <p class="section-label">Who it's for</p>
+    <h2 class="section-title">Built for builders and operators</h2>
+    <p class="section-sub">You need n8n self-hosted and a WhatsApp Business number. That's it.</p>
+    <div class="for-grid">
+      <div class="for-card">
+        <h4>Freelancers &amp; agencies</h4>
+        <p>Deploy to clients in hours, not weeks. The Pro tier includes a multi-client architecture guide so you can run 10 clients on one n8n instance.</p>
+      </div>
+      <div class="for-card">
+        <h4>Small business operators</h4>
+        <p>You handle 50+ WhatsApp messages a day and want the bot to handle the routine ones — without hiring another person.</p>
+      </div>
+      <div class="for-card">
+        <h4>n8n enthusiasts</h4>
+        <p>You know your way around n8n and want a production-grade reference implementation, not a tutorial workflow.</p>
+      </div>
+      <div class="for-card">
+        <h4>NOT a fit if…</h4>
+        <p>You've never used n8n and don't want to learn. Or you want a fully managed service where someone else handles setup — check out <a href="https://tyve.com.br" style="color: var(--blue-primary); text-decoration: underline;">TYVE</a> instead.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section style="background: var(--grey-100);">
+  <div class="container">
+    <p class="section-label">FAQ</p>
+    <h2 class="section-title">Common questions</h2>
+    <div class="faq-list">
+      <details open>
+        <summary>Does this work with WhatsApp Cloud API?</summary>
+        <p>The Core template uses Evolution API (connects to your WhatsApp Business App via QR code). The Pro tier includes a migration guide for WhatsApp Cloud API + Coexistence, which lets you use both the app and the bot simultaneously.</p>
+      </details>
+      <details>
+        <summary>Which AI models are supported?</summary>
+        <p>Any model available on OpenRouter — Claude 3.5 Haiku, GPT-4o, Gemini 2.0 Flash, Llama 3, and hundreds more. The fallback uses Anthropic's API directly. You can swap models by changing one field in n8n.</p>
+      </details>
+      <details>
+        <summary>Do I need a server to run this?</summary>
+        <p>Yes — n8n must be self-hosted (a $6–12/month VPS works fine). n8n Cloud also works. The PostgreSQL database can run on the same server or on a managed service like Supabase or Railway.</p>
+      </details>
+      <details>
+        <summary>Can I use this for multiple clients?</summary>
+        <p>Yes. Each client gets their own duplicated workflow with a unique webhook path and Evolution API instance. The Pro tier includes a guide on running 10+ clients on a single n8n instance without interference.</p>
+      </details>
+      <details>
+        <summary>Is there ongoing support?</summary>
+        <p>This is a template product — no ongoing support is included. The setup guide covers the most common issues. For community help, the n8n forum at community.n8n.io is excellent.</p>
+      </details>
+      <details>
+        <summary>What's your refund policy?</summary>
+        <p>Because this is a digital download, all sales are final. If you hit a setup blocker, open a GitHub issue and we'll do our best to help.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <div class="container">
+    <h2>Ready to automate your WhatsApp?</h2>
+    <p>Download once. Deploy forever. No monthly fees.</p>
+    <div class="final-actions">
+      <a href="#gumroad-pro" class="btn-primary">Get Pro — $497</a>
+      <a href="#gumroad-core" class="btn-secondary">Core — $297</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <svg viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="zapgrad-footer" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#22C55E"/>
+            <stop offset="1" stop-color="#38BDF8"/>
+          </linearGradient>
+        </defs>
+        <rect x="36" y="36" rx="120" ry="120" width="440" height="440" fill="#0B0F14"/>
+        <path d="M86 104 C160 54 270 48 426 104" stroke="#111827" stroke-width="44" opacity="0.55" stroke-linecap="round"/>
+        <path d="M164 184 H352 L164 304 H352" stroke="url(#zapgrad-footer)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M132 230 C112 256 112 252 132 278" stroke="url(#zapgrad-footer)" stroke-width="26" stroke-linecap="round" opacity="0.65"/>
+      </svg>
+      ZapPro
+    </div>
+    <div>© 2026 ZapPro. Not affiliated with Meta, Facebook, or WhatsApp.</div>
+    <div>A product by <a href="https://tyve.com.br" style="color: #64748B; text-decoration: underline;">TYVE</a></div>
+  </div>
+</footer>
+
+</body>
+</html>

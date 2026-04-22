@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Build a WhatsApp AI triage bot with n8n in 30 minutes. Learn message buffering, deduplication, AI agent architecture, and handoff detection. Step-by-step guide for no-code automation.">
+    <meta name="keywords" content="n8n WhatsApp bot, WhatsApp automation, AI triage bot, n8n template, no-code automation, Evolution API, whatsapp business api">
+    <meta name="author" content="ZapPro Team">
+    <meta property="og:title" content="How to Build a WhatsApp AI Triage Bot with n8n in 30 Minutes">
+    <meta property="og:description" content="Complete guide to building a 24/7 WhatsApp bot that qualifies leads, responds instantly, and escalates urgent cases to humans.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://zapproai.com/blog/whatsapp-ai-triage-bot-n8n.html">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="How to Build a WhatsApp AI Triage Bot with n8n in 30 Minutes">
+    <meta name="twitter:description" content="Step-by-step guide to building a WhatsApp triage bot with message buffering, AI, and human handoff.">
+
+    <title>How to Build a WhatsApp AI Triage Bot with n8n in 30 Minutes</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0A0E17;
+            --bg-darker: #050709;
+            --bg-card: #0F172A;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+            --text-muted: #64748B;
+            --accent-green: #22C55E;
+            --accent-blue: #0369A1;
+            --accent-blue-light: #0284C7;
+            --border-color: #1E293B;
+            --code-bg: #1E293B;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-darker);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        /* Article Container */
+        article {
+            max-width: 800px;
+            margin: 3rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero / Header */
+        .article-header {
+            margin-bottom: 3rem;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .reading-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            color: var(--text-primary);
+        }
+
+        .article-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(3, 105, 161, 0.05));
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+
+        .author-info strong {
+            display: block;
+            font-weight: 600;
+        }
+
+        .author-info span {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Content Sections */
+        h2 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        .hook {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(34, 197, 94, 0.05);
+            border-left: 4px solid var(--accent-green);
+            border-radius: 4px;
+        }
+
+        ul, ol {
+            margin: 1.5rem 0;
+            padding-left: 2rem;
+            color: var(--text-primary);
+        }
+
+        li {
+            margin-bottom: 0.75rem;
+            line-height: 1.8;
+        }
+
+        /* Code Blocks */
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: var(--text-primary);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            font-size: 13px;
+        }
+
+        .code-label {
+            display: inline-block;
+            background: var(--accent-blue);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Info Boxes */
+        .info-box, .warning-box, .tip-box {
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            border-left: 4px solid;
+        }
+
+        .info-box {
+            background: rgba(3, 105, 161, 0.05);
+            border-color: var(--accent-blue);
+        }
+
+        .warning-box {
+            background: rgba(234, 179, 8, 0.05);
+            border-color: #EAB308;
+        }
+
+        .tip-box {
+            background: rgba(34, 197, 94, 0.05);
+            border-color: var(--accent-green);
+        }
+
+        .info-box strong, .warning-box strong, .tip-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background: var(--bg-card);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(34, 197, 94, 0.03);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(3, 105, 161, 0.1));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .cta-section h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .cta-btn-primary {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            color: white;
+            border: none;
+        }
+
+        .cta-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(34, 197, 94, 0.2);
+        }
+
+        .cta-btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .cta-btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            article {
+                margin: 2rem auto;
+                padding: 0 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 12px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .cta-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="https://zapproai.com" class="logo">ZapPro</a>
+            <ul class="nav-links">
+                <li><a href="https://zapproai.com#templates">Templates</a></li>
+                <li><a href="https://zapproai.com#faq">FAQ</a></li>
+                <li><a href="mailto:zapproai@gmail.com">Support</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <article>
+        <div class="article-header">
+            <div class="article-meta">
+                <span class="reading-time">📖 15 min read</span>
+                <span>Apr 22, 2026</span>
+            </div>
+
+            <h1>How to Build a WhatsApp AI Triage Bot with n8n in 30 Minutes</h1>
+
+            <p class="article-subtitle">Complete architecture guide: message buffering, deduplication, AI escalation, and human handoff</p>
+
+            <div class="author-info">
+                <div>
+                    <strong>ZapPro Team</strong>
+                    <span>Builders of n8n WhatsApp automation templates</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="hook">
+            Your clients are messaging at 11pm. Your team responds at 9am. That's 10 hours of silence — and lost revenue.
+        </div>
+
+        <p>
+            This guide shows you how to build a 24/7 WhatsApp AI bot that responds instantly to inbound messages, qualifies leads in real-time, and escalates urgent cases to your team — without hiring anyone. It's fully automatable with n8n, Evolution API or WhatsApp Cloud API, and Claude/OpenRouter.
+        </p>
+
+        <p>
+            The architecture we're covering is battle-tested on real clients. You'll learn the exact patterns that prevent double processing, handle concurrency, and keep your bot reliable at scale.
+        </p>
+
+        <!-- What You'll Build -->
+        <h2>What You'll Build</h2>
+
+        <p>
+            A WhatsApp bot that:
+        </p>
+
+        <ul>
+            <li><strong>Responds 24/7</strong> — No human needed until it's actually urgent</li>
+            <li><strong>Qualifies leads</strong> — Asks relevant questions based on your business (clinic, salon, e-commerce, etc.)</li>
+            <li><strong>Detects urgency</strong> — Identifies emergencies and escalates instantly</li>
+            <li><strong>Schedules appointments</strong> — Integrates with Google Calendar (Pro only)</li>
+            <li><strong>Never loses messages</strong> — Buffers messages to prevent race conditions and duplicate processing</li>
+            <li><strong>Hands off smoothly</strong> — Notifies your team with full conversation context when human input is needed</li>
+        </ul>
+
+        <!-- Prerequisites -->
+        <h2>Prerequisites</h2>
+
+        <p>
+            Before you start, you'll need:
+        </p>
+
+        <ul>
+            <li><strong>n8n instance</strong> — Self-hosted (Docker, Cloudfy, or DigitalOcean) or cloud (<a href="https://n8n.cloud" style="color: var(--accent-blue);">n8n.cloud</a>)</li>
+            <li><strong>WhatsApp API</strong> — Evolution API (fastest: QR code, 10 minutes) OR WhatsApp Cloud API (official, slower: 3-5 days for verification)</li>
+            <li><strong>LLM API key</strong> — OpenRouter or Anthropic API (Claude model). OpenRouter recommended (better routing, cheaper fallback)</li>
+            <li><strong>PostgreSQL database</strong> — For message buffering and state tracking (included with most n8n hosting)</li>
+            <li><strong>A WhatsApp Business number</strong> — Already active or ready to activate</li>
+        </ul>
+
+        <div class="info-box">
+            <strong>⚡ Evolution vs Cloud API?</strong>
+            Evolution API is faster to set up (QR code login, 10 min) but isn't official Meta. WhatsApp Cloud API is official and more reliable at scale, but requires business verification (3-5 days) and disables your personal app. For this tutorial, we'll use Evolution API. The same architecture works with Cloud API — only the webhook details change.
+        </div>
+
+        <!-- Architecture Overview -->
+        <h2>Architecture Overview: Why Each Step Matters</h2>
+
+        <p>
+            Here's the core flow:
+        </p>
+
+        <div class="architecture">
+Inbound Message
+        ↓
+   NORMALIZE
+  (handle text, media, etc.)
+        ↓
+  IS_DUPLICATE_CHECK
+ (check recent memory)
+        ↓
+ BUFFER_INSERT
+(write to queue)
+        ↓
+   WAIT 10 SECONDS
+(collect rapid messages)
+        ↓
+  BUFFER_SELECT (FOR UPDATE SKIP LOCKED)
+(get queued messages, lock row)
+        ↓
+ BUFFER_AGGREGATE
+(combine into one context)
+        ↓
+  BUFFER_DELETE
+(remove processed)
+        ↓
+  AI AGENT
+(Claude/Haiku via OpenRouter)
+        ↓
+ HANDOFF_CHECK
+({handoff} tag + urgency keywords)
+        ↓
+  If handoff:
+   SEND_TEAM_NOTIFICATION
+   (include full context)
+  Else:
+   SEND_RESPONSE
+   (reply to user)
+        </div>
+
+        <p>
+            <strong>Why this architecture?</strong>
+        </p>
+
+        <ol>
+            <li><strong>NORMALIZE</strong> — WhatsApp can send text, images, audio, location. You need to extract just the meaningful data and detect media.</li>
+            <li><strong>IS_DUPLICATE_CHECK</strong> — n8n workflows can trigger twice for the same webhook if there's network jitter. Check recent messages to avoid "Hello Hello!"</li>
+            <li><strong>BUFFER_INSERT → WAIT 10s → SELECT</strong> — This is the core innovation. When a customer sends 5 rapid messages ("Can you help?" "I have a toothache" "It's urgent" "Please call" "Thanks"), we DON'T fire the AI 5 times. We insert all 5, wait a bit, then select and aggregate as one conversation.</li>
+            <li><strong>FOR UPDATE SKIP LOCKED</strong> — PostgreSQL row-level locking. If two webhook executions hit SELECT at the same time, one locks the row. The other skips it (SKIP LOCKED) instead of waiting. Prevents duplicate processing.</li>
+            <li><strong>BUFFER_AGGREGATE</strong> — Combine the 5 messages into a single prompt context for the AI, preserving message order.</li>
+            <li><strong>AI AGENT</strong> — Claude running the triage logic (questions, scoring, handoff rules). Cheap with Haiku ($0.005 per conversation).</li>
+            <li><strong>HANDOFF_CHECK</strong> — AI might include {handoff} tag in output, OR urgent keywords in input override the AI (if AI missed it). Fallback logic catches human mistakes.</li>
+        </ol>
+
+        <p>
+            This prevents the two most common bugs: <em>double processing</em> and <em>missing urgent cases</em>.
+        </p>
+
+        <!-- Step-by-Step Build -->
+        <h2>Step-by-Step Build</h2>
+
+        <h3>Step 1: Set Up Evolution API + Webhook</h3>
+
+        <p>
+            Create an Evolution API instance. This is the bridge between WhatsApp and n8n.
+        </p>
+
+        <ol>
+            <li>In Evolution API (or your provider's UI), create a new instance. Name it something like "my-clinic-bot".</li>
+            <li>Get the instance token and webhook URL path from n8n. In n8n, create a new workflow and add a Webhook trigger node. The path will be something like: <code>/webhook/5ca49874-447c-46fc-9e4a-3a2bc8f98afd</code></li>
+            <li>Paste that webhook URL into Evolution API's instance settings.</li>
+            <li>Scan the QR code with your WhatsApp Business number. Wait 10-30 seconds for it to connect.</li>
+        </ol>
+
+        <div class="code-label">n8n Webhook Node Config</div>
+        <pre><code class="language-json">{
+  "type": "webhook",
+  "typeVersion": 2,
+  "position": [250, 100],
+  "parameters": {
+    "path": "5ca49874-447c-46fc-9e4a-3a2bc8f98afd",
+    "responseMode": "onReceived",
+    "options": {}
+  }
+}</code></pre>
+
+        <div class="tip-box">
+            <strong>💡 Webhook path must be UUID format.</strong> Custom strings like "/my-webhook" cause persistent 500 errors in some n8n versions. Always use the auto-generated UUID from the Webhook node.
+        </div>
+
+        <h3>Step 2: Normalize Incoming Messages</h3>
+
+        <p>
+            WhatsApp sends different message types: <code>text</code>, <code>image</code>, <code>audio</code>, <code>document</code>, <code>location</code>. We need to extract just the content and media type.
+        </p>
+
+        <div class="code-label">NORMALIZE Node (Set Node)</div>
+        <pre><code class="language-javascript">// Extract key fields from Evolution API webhook
+return {
+  chat_id: $input.first().json.data.chatId,
+  message_id: $input.first().json.data.id,
+  sender: $input.first().json.data.fromMe ? 'bot' : 'user',
+  text: $input.first().json.data.body || '',
+  message_type: $input.first().json.data.type || 'text',
+  timestamp: new Date($input.first().json.data.timestamp * 1000).toISOString(),
+  media_type: $input.first().json.data.mediaType || null,
+  media_url: $input.first().json.data.media?.url || null
+};</code></pre>
+
+        <p>
+            Now you have a clean, standardized message object for the rest of the workflow.
+        </p>
+
+        <h3>Step 3: Message Buffering (The Most Important Part)</h3>
+
+        <p>
+            This is where the magic happens. Instead of processing messages immediately, we queue them for a few seconds and batch-process them.
+        </p>
+
+        <p>
+            <strong>Why?</strong> When a user sends rapid messages ("My tooth hurts!" "It's swollen!" "Please help!"), you don't want the bot to respond 3 separate times. You want one context-aware response that saw all 3 messages.
+        </p>
+
+        <div class="code-label">Step 3a: BUFFER_INSERT (PostgreSQL)</div>
+        <pre><code class="language-sql">-- Create the buffer table (run once)
+CREATE TABLE IF NOT EXISTS wa_msg_buffer (
+  id SERIAL PRIMARY KEY,
+  chat_id TEXT NOT NULL,
+  message_id TEXT UNIQUE,
+  content TEXT,
+  message_type VARCHAR(50),
+  inserted_at TIMESTAMPTZ DEFAULT NOW(),
+  processed_at TIMESTAMPTZ
+);
+
+-- Insert the message
+INSERT INTO wa_msg_buffer (chat_id, message_id, content, message_type)
+VALUES ($1, $2, $3, $4)
+ON CONFLICT (message_id) DO NOTHING;</code></pre>
+
+        <p>
+            The <code>ON CONFLICT DO NOTHING</code> ensures if the webhook fires twice with the same message_id, the second insert is silently ignored.
+        </p>
+
+        <div class="code-label">Step 3b: WAIT Node</div>
+        <p>
+            Add a simple Wait node set to <strong>10 seconds</strong>. This gives time for rapid-fire messages to accumulate in the buffer.
+        </p>
+
+        <div class="code-label">Step 3c: BUFFER_SELECT (PostgreSQL with Row Locking)</div>
+        <pre><code class="language-sql">-- Lock and fetch unprocessed messages for this chat
+WITH locked_rows AS (
+  SELECT id, chat_id, message_id, content, message_type, inserted_at
+  FROM wa_msg_buffer
+  WHERE chat_id = $1
+    AND processed_at IS NULL
+  ORDER BY inserted_at ASC
+  LIMIT 20
+  FOR UPDATE SKIP LOCKED
+)
+SELECT * FROM locked_rows;</code></pre>
+
+        <p>
+            <strong>FOR UPDATE SKIP LOCKED</strong> is the secret sauce. If two workflow executions hit this query concurrently:
+        </p>
+
+        <ul>
+            <li>Execution 1 locks the rows and processes them</li>
+            <li>Execution 2 tries to lock the same rows, finds them locked, and skips them (returns 0 rows)</li>
+        </ul>
+
+        <p>
+            This prevents duplicate processing without blocking.
+        </p>
+
+        <div class="code-label">Step 3d: BUFFER_AGGREGATE (Set Node)</div>
+        <pre><code class="language-javascript">// Combine multiple messages into one prompt context
+const messages = $input.all();
+const aggregated = messages.map(msg =>
+  `[${new Date(msg.json.inserted_at).toLocaleTimeString()}] ${msg.json.content}`
+).join('\n');
+
+return {
+  chat_id: messages[0].json.chat_id,
+  aggregated_text: aggregated,
+  message_count: messages.length,
+  first_message_id: messages[0].json.message_id,
+  last_message_id: messages[messages.length - 1].json.message_id
+};</code></pre>
+
+        <div class="code-label">Step 3e: BUFFER_DELETE (PostgreSQL)</div>
+        <pre><code class="language-sql">-- Mark messages as processed
+UPDATE wa_msg_buffer
+SET processed_at = NOW()
+WHERE chat_id = $1
+  AND message_id IN ($2, $3, $4, ...);  -- List all message IDs</code></pre>
+
+        <div class="warning-box">
+            <strong>⚠️ Order matters!</strong> Do SELECT, then AGGREGATE, then DELETE. If you delete before the AI finishes, you'll lose the context.
+        </div>
+
+        <h3>Step 4: AI Agent with System Prompt</h3>
+
+        <p>
+            Now that you have aggregated messages, send them to Claude via OpenRouter.
+        </p>
+
+        <div class="code-label">AI Agent Node Config (n8n)</div>
+        <pre><code class="language-json">{
+  "type": "openaiChat",
+  "typeVersion": 1,
+  "position": [750, 300],
+  "parameters": {
+    "model": "anthropic/claude-3-5-haiku",
+    "provider": "openai",
+    "prompt": "=See system prompt below=",
+    "text": "={{ $('BUFFER_AGGREGATE').first().json.aggregated_text }}",
+    "options": {
+      "maxTokens": 500,
+      "temperature": 0.7,
+      "topP": 0.9
+    }
+  }
+}</code></pre>
+
+        <p>
+            The system prompt is the core of your bot's behavior. Here's a real template:
+        </p>
+
+        <div class="code-label">System Prompt Template</div>
+        <pre><code class="language-markdown">You are a helpful AI receptionist for a dental clinic.
+
+**Your role:**
+- Answer patient questions about procedures, hours, and policies
+- Qualify incoming leads with 3 questions: name, issue, and urgency
+- Escalate to human if patient is in pain or the issue is urgent
+
+**Triage rules:**
+1. If patient mentions pain, swelling, bleeding, infection, or emergency → handoff
+2. If patient asks for appointment → collect details and {handoff}
+3. If you're confident you answered the question → respond naturally
+4. If unsure → ask 1 clarifying question, don't guess
+
+**Guardrails:**
+- NEVER promise immediate response times ("instantly", "right now")
+- NEVER schedule appointments without collecting preferred date/time
+- NEVER recommend specific medications or diagnoses
+- If patient needs emergency care → say "This needs urgent attention. Please call 911 or go to the ER"
+
+**Handoff signal:**
+When you need a human, end your response with {handoff} tag.
+Example:
+"I've noted your symptoms. Let me connect you with Dr. Silva who can schedule you for an urgent exam. {handoff}"
+
+**Tone:**
+- Professional but warm
+- Clear and concise (max 2 sentences per message)
+- Use patient's name when known
+
+Now respond to the patient's message:</code></pre>
+
+        <p>
+            The <code>{handoff}</code> tag is crucial — the next step will look for it.
+        </p>
+
+        <div class="info-box">
+            <strong>🧠 Why Haiku?</strong> Claude 3.5 Haiku is cheap ($0.005 per 1K input tokens), fast (<200ms), and good enough for triage logic. Don't need Sonnet for routing questions. Save Sonnet for Complex reasoning (contract analysis, strategy) or closing sales (Converte). Cost: ~$0.01 per conversation at typical message volumes.
+        </div>
+
+        <h3>Step 5: Handoff Detection + Fallback Logic</h3>
+
+        <p>
+            The AI outputs a response. If it includes <code>{handoff}</code>, route to your team. If it doesn't but the input has urgent keywords, force a handoff anyway (safety net).
+        </p>
+
+        <div class="code-label">HANDOFF_CHECK (IF Node)</div>
+        <pre><code class="language-javascript">// Condition: Is this a handoff?
+const aiOutput = $('AI_AGENT').first().json.text;
+const userInput = $('BUFFER_AGGREGATE').first().json.aggregated_text;
+
+// Check 1: AI included {handoff} tag
+const hasHandoffTag = aiOutput.includes('{handoff}');
+
+// Check 2: User input has urgency keywords (fallback if AI missed it)
+const urgencyKeywords = /emergency|urgent|pain|swelling|bleeding|help|911|cannot wait|right now/i;
+const isUrgent = urgencyKeywords.test(userInput);
+
+return {
+  shouldHandoff: hasHandoffTag || isUrgent,
+  reason: hasHandoffTag ? 'ai_tag' : 'urgency_fallback'
+};</code></pre>
+
+        <div class="code-label">Remove {handoff} tags from response</div>
+        <pre><code class="language-javascript">// Clean the response for sending to user
+const aiText = $('AI_AGENT').first().json.text;
+const cleaned = aiText
+  .replace(/\{handoff\}/g, '')
+  .replace(/\{urgente\}/g, '')
+  .trim();
+
+return { response_text: cleaned };</code></pre>
+
+        <h3>Step 6: Send Response or Escalate</h3>
+
+        <p>
+            Split into two branches: handoff (notify team) or normal response (send to user).
+        </p>
+
+        <div class="code-label">SEND_RESPONSE (Evolution API node)</div>
+        <pre><code class="language-json">{
+  "type": "evolutionAPI",
+  "parameters": {
+    "operation": "send-text",
+    "instanceKey": "my-clinic-bot",
+    "remoteJid": "={{ $('NORMALIZE').first().json.chat_id }}",
+    "messageText": "={{ $json.response_text.replace(/\\\\n/g, '\\n') }}",
+    "options": {}
+  }
+}</code></pre>
+
+        <div class="warning-box">
+            <strong>⚠️ Newline escaping bug:</strong> n8n's langchain agent sometimes outputs `\n` as a literal backslash-n instead of a real newline. The `.replace(/\\\\n/g, '\\n')` fixes it. This is a known issue with double-serialization in some n8n versions.
+        </div>
+
+        <div class="code-label">SEND_TEAM_NOTIFICATION (Evolution API)</div>
+        <pre><code class="language-json">{
+  "type": "evolutionAPI",
+  "parameters": {
+    "operation": "send-text",
+    "instanceKey": "my-clinic-bot",
+    "remoteJid": "5516994247541@s.whatsapp.net",
+    "messageText": "=See template below="
+  }
+}</code></pre>
+
+        <div class="code-label">Notification Message Template</div>
+        <pre><code class="language-markdown">🚨 URGENT HANDOFF
+
+**Patient:** John Doe
+**Issue:** Severe toothache, swelling
+**Timestamp:** 2:34 PM
+
+**Full Conversation:**
+---
+2:32 PM: Hi, I have a tooth problem
+2:33 PM: It's been hurting since yesterday
+2:34 PM: Can you help?
+---
+
+**Bot Note:** Patient reports pain + swelling. Needs immediate triage.
+
+👉 Reply directly to continue the conversation.</code></pre>
+
+        <p>
+            This gives your team full context so they can respond intelligently.
+        </p>
+
+        <!-- Advanced Features -->
+        <h2>Advanced Features (Tease Pro)</h2>
+
+        <p>
+            The foundation above is solid for simple triage. Here's what separates a basic bot from a production-grade one:
+        </p>
+
+        <h3>Follow-Up Automation (D+1 and D+3)</h3>
+        <p>
+            After handing off to a human, the conversation often goes quiet. If the patient doesn't respond within 24 hours, send a follow-up ("Just checking in..."). Again at 72 hours. This is huge for recovery.
+        </p>
+
+        <h3>Google Calendar Integration</h3>
+        <p>
+            When a patient says "I want to book an appointment for Monday at 3pm", the bot doesn't just write it down — it creates the Google Calendar event in real-time and sends back the booking confirmation. Zero manual data entry.
+        </p>
+
+        <h3>Anthropic API Fallback</h3>
+        <p>
+            If OpenRouter goes down (rare, but happens), automatically switch to Anthropic direct API. Your bot keeps working, customers never notice.
+        </p>
+
+        <h3>Error Monitoring</h3>
+        <p>
+            Messages stuck in the buffer? Database connection down? A monitoring workflow checks every 30 minutes and alerts you on WhatsApp before customers complain.
+        </p>
+
+        <p>
+            These are all included in ZapPro Pro ($497) — pre-built, tested, and deployed in production.
+        </p>
+
+        <!-- Common Pitfalls -->
+        <h2>Common Pitfalls (And How to Avoid Them)</h2>
+
+        <h3>1. No Buffer = Double Processing</h3>
+        <p>
+            If you skip the buffer and send every message straight to the AI, a network glitch causes the webhook to fire twice. Your user gets two bot responses. With a buffer + FOR UPDATE SKIP LOCKED, the second execution finds 0 unprocessed rows and exits gracefully.
+        </p>
+
+        <h3>2. AI Hallucinating Appointment Times</h3>
+        <p>
+            Haiku is fast but sometimes invents information. System prompt must explicitly say: "NEVER schedule without confirming both date AND time with the patient." And: "If unsure, ask again."
+        </p>
+
+        <h3>3. Webhook Path as Custom String</h3>
+        <p>
+            Using `/my-webhook` instead of UUID causes silent 500 errors. n8n publishes the workflow, the webhook path doesn't sync. Always use the auto-generated UUID. If you must change it, deactivate + activate the workflow to re-register the webhook handler.
+        </p>
+
+        <h3>4. Saving Without Publishing</h3>
+        <p>
+            In n8n, PATCH (save) and Publish are different. Saving updates the draft. Publishing updates the webhook handler. If you modify a workflow and only save, the old version still runs on incoming webhooks. Always: Save → Publish (via UI or API).
+        </p>
+
+        <h3>5. Human Mode Lock Forever</h3>
+        <p>
+            You might use a `human_mode` flag to pause the bot while a human is responding. If the flag gets stuck (UPDATE query fails), the bot stays locked forever. Add a TTL: <code>human_mode_until TIMESTAMPTZ</code>, and check `human_mode_until > NOW()` — expires automatically after 24 hours.
+        </p>
+
+        <h3>6. Missing Urgency Fallback</h3>
+        <p>
+            Relying 100% on AI to detect urgency fails when the AI misses it. Always add a keyword-based fallback: if input contains "emergency|urgent|pain|bleeding", force handoff regardless of AI output.
+        </p>
+
+        <!-- Scaling Considerations -->
+        <h2>Scaling Considerations</h2>
+
+        <p>
+            This architecture works for small teams (1-3 clinics, 100-500 messages/day). As you grow:
+        </p>
+
+        <ul>
+            <li><strong>Database connections:</strong> PostgreSQL pool size defaults to 5 simultaneous connections. At 5+ clients, increase to 10-20. Ask your hosting provider.</li>
+            <li><strong>Message buffer retention:</strong> Keep buffer data for 30 days (for debugging), then archive. Large buffer tables slow SELECT queries.</li>
+            <li><strong>n8n execution history:</strong> Disable automatic cleanup if you're on shared Cloudfy (it runs slow). Prune manually weekly.</li>
+            <li><strong>API costs:</strong> At 100 clinics sending 5K messages/month each (500K total), Haiku costs ~$2.5K/month. Still <8% of median clinic revenue.</li>
+        </ul>
+
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h3>Ready to Launch?</h3>
+            <p>
+                This guide shows the architecture, but building 65+ nodes from scratch takes 6-8 hours. The buffer logic, error handling, notification formatting — it all matters.
+            </p>
+            <p>
+                <strong>ZapPro templates skip the build time.</strong> Import, customize the system prompt for your business, and run. All the patterns above are already implemented, tested, and documented.
+            </p>
+            <div class="cta-buttons">
+                <a href="https://zappro.gumroad.com/l/zappro-core" class="cta-btn cta-btn-primary">
+                    ZapPro Core — $297
+                </a>
+                <a href="https://zappro.gumroad.com/l/zappro-pro" class="cta-btn cta-btn-primary">
+                    ZapPro Pro — $497
+                </a>
+            </div>
+            <p style="margin-top: 1.5rem; font-size: 14px; color: var(--text-secondary);">
+                <strong>Core includes:</strong> Webhook + buffer + AI triage + handoff. Ready to deploy in n8n. 30 days of free setup support via zapproai@gmail.com (deployment only).
+            </p>
+            <p style="font-size: 14px; color: var(--text-secondary);">
+                <strong>Pro includes:</strong> Everything in Core + Google Calendar scheduling + D+1/D+3 follow-up automation + monitoring dashboard + Anthropic fallback.
+            </p>
+        </div>
+
+        <!-- FAQ Section -->
+        <h2>FAQ</h2>
+
+        <h3>How long does it actually take to deploy?</h3>
+        <p>
+            If you're starting from scratch and building from this guide: 6-8 hours. If you use ZapPro Core: 30 minutes (import JSON + add your API credentials + test with a message).
+        </p>
+
+        <h3>What if I want to use WhatsApp Cloud API instead of Evolution?</h3>
+        <p>
+            The architecture is the same. Only the webhook payload format changes. Cloud API sends JSON with different field names. We handle that in the NORMALIZE step.
+        </p>
+
+        <h3>Can I add multiple languages?</h3>
+        <p>
+            Yes. Detect the user's language in NORMALIZE, then include a language parameter in the AI prompt. Claude handles 100+ languages.
+        </p>
+
+        <h3>What if the AI fails?</h3>
+        <p>
+            Add an error handler branch. If the AI node errors, fallback to a safe message ("I'm having trouble. A human will respond shortly. {handoff}"). This is included in ZapPro Pro as the Anthropic fallback.
+        </p>
+
+        <h3>Can I use this for sales, not just support?</h3>
+        <p>
+            Absolutely. Swap "triage questions" for "qualification questions". Same architecture, different system prompt. ZapPro includes a sales bot template (Converte track).
+        </p>
+
+        <h3>How much does this cost to run?</h3>
+        <p>
+            For a small clinic (500 messages/month):
+        </p>
+        <ul>
+            <li>Evolution API: ~$0 (self-hosted)</li>
+            <li>Claude Haiku (OpenRouter): ~$0.50</li>
+            <li>n8n: $20-100/month (self-hosted or cloud)</li>
+            <li>PostgreSQL: $0-50/month (included with most hosting)</li>
+            <li><strong>Total: ~$20-150/month</strong> (usually <8% of clinic revenue)</li>
+        </ul>
+
+        <!-- Conclusion -->
+        <h2>Conclusion</h2>
+
+        <p>
+            A 24/7 WhatsApp bot isn't magic — it's pattern matching + intelligent buffering + a good system prompt. The architecture above prevents the two biggest failure modes: double processing and missed urgency.
+        </p>
+
+        <p>
+            If you want to build it yourself, follow the steps above. If you want to skip the 8 hours and launch today, ZapPro has you covered.
+        </p>
+
+        <p>
+            Either way, your customers get instant responses at 11pm. And your team gets to sleep.
+        </p>
+
+        <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 14px;">
+            <p>
+                <strong>Have questions?</strong> Email <a href="mailto:zapproai@gmail.com" style="color: var(--accent-blue);">zapproai@gmail.com</a> or join the <a href="https://community.n8n.io" style="color: var(--accent-blue);">n8n Community</a> and search "WhatsApp buffer" — we're active there.
+            </p>
+        </div>
+    </article>
+
+    <footer>
+        <p>
+            © 2026 ZapPro. <a href="https://zapproai.com">Visit zapproai.com</a> for templates and examples.
+        </p>
+        <p style="margin-top: 1rem; font-size: 12px; color: var(--text-muted);">
+            Built for n8n community. Evolution API documentation: <a href="https://docs.evolution-api.com">evolution-api.com</a>. n8n docs: <a href="https://docs.n8n.io">docs.n8n.io</a>.
+        </p>
+    </footer>
+
+    <!-- Syntax Highlighting -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+        // Auto-highlight code blocks
+        document.querySelectorAll('pre code').forEach(el => {
+            if (!el.classList.contains('hljs')) {
+                hljs.highlightElement(el);
+            }
+        });
+
+        // Add copy button to code blocks
+        document.querySelectorAll('pre').forEach(block => {
+            const btn = document.createElement('button');
+            btn.textContent = 'Copy';
+            btn.style.cssText = `
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                background: var(--accent-blue);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 600;
+            `;
+            btn.onclick = () => {
+                const code = block.querySelector('code').textContent;
+                navigator.clipboard.writeText(code);
+                btn.textContent = 'Copied!';
+                setTimeout(() => { btn.textContent = 'Copy'; }, 2000);
+            };
+            block.style.position = 'relative';
+            block.appendChild(btn);
+        });
+    </script>
+</body>
+</html>
